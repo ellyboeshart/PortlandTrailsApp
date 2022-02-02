@@ -1,5 +1,6 @@
+import imp
+from app import db
 from enum import unique, Enum
-from trails_app_models.shared import db
 
 class Score(Enum):
     one = "1",

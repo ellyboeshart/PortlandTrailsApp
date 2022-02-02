@@ -1,10 +1,11 @@
-from trails_app_models.shared import db
+from sqlalchemy import Column
+from app import db
 
 class Users(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(30), unique=False, nullable = False)
+    id = Column(db.Integer, primary_key=True)
+    name = Column(db.String(80), unique=True, nullable=False)
+    email = Column(db.String(120), unique=True, nullable=False)
+    password = Column(db.String(30), unique=False, nullable = False)
 
     def __repr__(self):
-        return '<User id %r, name %r, email %r, password %r>' % self.id, self.name, self.email, self.password
+        return f'<User id {self.id}, name {self.name}, email {self.email}, password {self.password}>'
