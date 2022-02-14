@@ -1,8 +1,13 @@
-from flask import Flask, jsonify, request, redirect, flash, session
+from flask import Flask, jsonify, render_template, request, redirect, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from trails_app_models.users import Users
 from trails_app_models.trails import Trails
 from trails_app_models.reviews import Reviews
+import googlemaps
+import os 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "dev"
@@ -16,7 +21,7 @@ def before():
 
 @app.route('/')
 def get_base():
-    return "<p>Hello, World!</p>"
+    return render_template("homepage.html", api_key=os.getenv('GOOGLE_MAPS_API_KEY'))
 
 @app.route('/users/<id>')
 def get_user_by_id(id):
@@ -62,29 +67,30 @@ def get_review_by_id(id):
 
 @app.route('/sign_up',methods = ['POST'])
 def process_sign_up():
-    data = request.json
-    user = Users(id=data['id'], name=data['username'], email=data['email'], password=data['password'])
+    data = request.form
+    id = Users.query.all()
+    id = id[len(id) - 1].id + 1
+    user = Users(id=id, name=data['username'], email=data['email'], password=data['password'])
     db.session.add(user)
     db.session.commit()
-    return get_user_by_id(data['id'])
+    flash("User Added!")
+    return redirect('/')
 
 
 @app.route("/login", methods=["POST"])
 def process_login():
     """Process user login."""
-    data = request.json
+    data = request.form
     email = data["email"]
     password = data["password"]
 
     user = Users.query.filter_by(email=email).first()
     if not user or user.password != password:
-        return("Fail!")
-        # flash("The email or password you entered was incorrect.")
+        flash("The email or password you entered was incorrect.")
     else:
         # Log in user by storing the user's email in session
         session["user_email"] = user.email
-        return("Sucess!")
-        # flash(f"Welcome back, {user.email}!")
+        flash(f"Welcome back, {user.email}!")
 
     return redirect("/")
 
@@ -95,6 +101,28 @@ def process_review():
     db.session.add(review)
     db.session.commit()
     return get_review_by_id(data['id'])
+
+@app.route("/map")
+def get_gmap():
+    """ 
+      Get google map with centerpoint as input address 
+      and crimes populated in view window
+    """
+    # get the address from homepage input
+    street_adrs = request.args.get("address")
+    address = " ".join([street_adrs, "Oakland, CA"])
+
+    # create a google maps object
+    gmaps = googlemaps.Client(key="AIzaSyAYEecq-0vewqtZUphgIFOZb6LM0ddbIiw")
+
+    # Geocoding an address
+    geocode_result = gmaps.geocode(address)
+    
+    # get lat/lng (as float) of input address from geocode results
+    input_lat = geocode_result[0]["geometry"]["location"]["lat"]
+    input_lng = geocode_result[0]["geometry"]["location"]["lng"]
+
+    return render_template("map.html")
 
 if __name__ == '__main__':
    

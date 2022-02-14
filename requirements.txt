@@ -1,3 +1,5 @@
 Flask
 sqlalchemy 
 psycopg2
+googlemaps
+python-dotenv
