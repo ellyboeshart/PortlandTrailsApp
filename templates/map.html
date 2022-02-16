@@ -2,13 +2,127 @@
 {% block title %}Google Map{% endblock %}
 {% block head %}
 
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<!-- font awesome cdn -->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-<link rel="stylesheet" href="static/style.css">
-<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.js'></script>
-<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<h3>Portland Trails</h3>
+<!--The div element for the map -->
+
+<label for="trail">Trail Name:</label>
+<select id="trail" name="trail">
+  <option value="Trail1">Volvo</option>
+  <option value="Trail2">Saab</option>
+  <option value="fiat">Fiat</option>
+  <option value="audi">Audi</option>
+</select> 
+
+<label for="difficulty">Difficulty:</label>
+<select id="difficulty" name="difficulty">
+  <option value="easy">Easy</option>
+  <option value="medium">Medium</option>
+  <option value="hard">Hard</option>
+</select> 
+
+<label for="length">Length:</label>
+<input id="length" name="length"
+       min="1" max="20">
+
+<div id="map">
+    <div class="dropDownControl" id="My Box">My Box<img src="http://maps.gstatic.com/mapfiles/arrow-down.png" class="dropDownArrow"></div>
+    
+</div>
+
+
+<style type="text/css">
+  /* Set the size of the div element that contains the map */
+  #map {
+    width: 100%;
+    height: 500px;
+}
+
+.container-fluid {
+	height: auto;
+	background-color: #6ed3cf;
+    padding: 5px 0px 5px 5px;
+}
+
+.footer {
+    height: auto;
+    bottom: 0;
+    background-color: #6ed3cf;
+}
+
+.navbar-brand {
+    height: 14px;
+    color: #815DAB;
+    font-size: 35px;
+    size: 180%;
+}
+
+
+.navbar-brand-footer {
+    font-size: 26px;
+}
+
+.container {
+    width: 90%;
+    margin-bottom: 10px;
+
+}
+
+html { 
+	height: 100%;
+	background-color: #7bce79;
+}
+
+body {
+	height: 100%; 
+	margin: 0px; 
+	padding: 0px; 
+	font-family:"arial", helvetica; 
+	color:#000000; 
+}
+
+ 
+
+</style>
+<script type="text/javascript">
+
+     
+    function buttonControl(options) {
+        var control = document.createElement('DIV');
+        control.innerHTML = options.name;
+        control.className = 'button';
+        control.index = 1;
+
+        // Add the control to the map
+        options.gmap.controls[options.position].push(control);
+
+        // When the button is clicked pan to sydney
+        google.maps.event.addDomListener(control, 'click', options.action);
+        return control;
+    }
+
+  // Initialize and add the map
+  function initMap() {
+
+    // The location of Uluru
+    const uluru = {"lat": 45.51334993555411, "lng": -122.66478547235977 };
+    // The map, centered at Uluru
+    const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 12,
+            center: uluru,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            mapTypeControl: true,
+            mapTypeControlOptions: {
+                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+            }
+        });
+    }
+
+</script>
+
+
+
+<script
+  src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap&libraries=&v=weekly"
+  async
+></script>
 {% endblock %}

@@ -87,12 +87,12 @@ def process_login():
     user = Users.query.filter_by(email=email).first()
     if not user or user.password != password:
         flash("The email or password you entered was incorrect.")
+        return redirect("/")
     else:
         # Log in user by storing the user's email in session
         session["user_email"] = user.email
         flash(f"Welcome back, {user.email}!")
-
-    return redirect("/")
+        return redirect("/map")
 
 @app.route('/review',methods = ['POST'])
 def process_review():
@@ -108,21 +108,8 @@ def get_gmap():
       Get google map with centerpoint as input address 
       and crimes populated in view window
     """
-    # get the address from homepage input
-    street_adrs = request.args.get("address")
-    address = " ".join([street_adrs, "Oakland, CA"])
 
-    # create a google maps object
-    gmaps = googlemaps.Client(key="AIzaSyAYEecq-0vewqtZUphgIFOZb6LM0ddbIiw")
-
-    # Geocoding an address
-    geocode_result = gmaps.geocode(address)
-    
-    # get lat/lng (as float) of input address from geocode results
-    input_lat = geocode_result[0]["geometry"]["location"]["lat"]
-    input_lng = geocode_result[0]["geometry"]["location"]["lng"]
-
-    return render_template("map.html")
+    return render_template("map.html", api_key=os.getenv('GOOGLE_MAPS_API_KEY'))
 
 if __name__ == '__main__':
    
