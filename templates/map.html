@@ -1,17 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Google Map{% endblock %}
+{% block title %}Portland Trails{% endblock %}
 {% block head %}
 
 <h3>Portland Trails</h3>
 <!--The div element for the map -->
 
 <label for="trail">Trail Name:</label>
-<select id="trail" name="trail">
-  <option value="Trail1">Volvo</option>
-  <option value="Trail2">Saab</option>
-  <option value="fiat">Fiat</option>
-  <option value="audi">Audi</option>
-</select> 
+<input id="trail" name="trail"
+    min="1" max="20">
 
 <label for="difficulty">Difficulty:</label>
 <select id="difficulty" name="difficulty">
@@ -21,8 +17,23 @@
 </select> 
 
 <label for="length">Length:</label>
-<input id="length" name="length"
-       min="1" max="20">
+<input type="range" min="1" max="30" value="15" class="slider" id="myRange">
+</div>
+
+<label for="elevation">Elevation:</label>
+<input type="range" min="1" max="30" value="15" class="slider" id="myRange">
+</div>
+
+<label for="time">Time:</label>
+<input type="range" min="1" max="30" value="15" class="slider" id="myRange">
+</div>
+
+<label for="route type">Route Type:</label>
+<select id="route type" name="route type">
+    <option value="loop">Loop</option>
+    <option value="out_and_back">Out and Back</option>
+    <option value="point_to_point">Point to Point</option>
+</select> 
 
 <div id="map">
     <div class="dropDownControl" id="My Box">My Box<img src="http://maps.gstatic.com/mapfiles/arrow-down.png" class="dropDownArrow"></div>

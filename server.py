@@ -1,3 +1,4 @@
+from unicodedata import name
 from flask import Flask, jsonify, render_template, request, redirect, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from trails_app_models.users import Users
