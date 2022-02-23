@@ -105,12 +105,29 @@ def process_review():
 
 @app.route("/map")
 def get_gmap():
-    """ 
-      Get google map with centerpoint as input address 
-      and crimes populated in view window
-    """
+    """Get google map with trails information"""
 
-    return render_template("map.html", api_key=os.getenv('GOOGLE_MAPS_API_KEY'))
+    all_trails = Trails.query.all()
+
+    trailslists = []
+
+    for trail in all_trails:
+        marker = {
+            "name": trail.name,
+            "long": trail.longitude,
+            "lat": trail.latitude,
+            "des": trail.description,
+            "dif": str(trail.difficulty),
+            "len": trail.length,
+            "elv": trail.elevation,
+            "tim": trail.time,
+            "routetype": str(trail.routetype)
+        }
+
+        trailslists.append(marker)
+
+      
+    return render_template("map.html", api_key=os.getenv('GOOGLE_MAPS_API_KEY'), trailslists=trailslists)
 
 if __name__ == '__main__':
    

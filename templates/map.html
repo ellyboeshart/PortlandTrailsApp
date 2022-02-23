@@ -94,8 +94,10 @@ body {
  
 
 </style>
-<script type="text/javascript">
-
+<script>
+    "use strict";
+    const trailslists = {{ trailslists|tojson }};
+    console.log(trailslists);
      
     function buttonControl(options) {
         var control = document.createElement('DIV');
@@ -116,8 +118,8 @@ body {
 
     // The location of Uluru
     const uluru = {"lat": 45.51334993555411, "lng": -122.66478547235977 };
-    // The map, centered at Uluru
-    const map = new google.maps.Map(document.getElementById("map"), {
+    // The map, centered at uluru
+    let map = new google.maps.Map(document.getElementById("map"), {
             zoom: 12,
             center: uluru,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -126,10 +128,46 @@ body {
                 style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
             }
         });
+
+    for (let i=0; i < trailslists.length; i++) {
+        let position = new google.maps.LatLng(trailslists[i].long, trailslists[i].lat);
+
+        let infowindow = getInfo(trailslists[i]);
+        
+        let marker = new google.maps.Marker({
+            position: position,
+            map,
+            title: trailslists.name,
+        });
+
+        marker.addListener("click", () => {
+            infowindow.open({
+            anchor: marker,
+            map,
+            shouldFocus: false,
+        })});
+
+        marker.setMap(map);
     }
+}
+function getInfo(trail) {
+    const contentString =
+        `<div id="trailInfo"> 
+        <ul style="list-style-type:none">
+            <li><b>Trail Name: ${trail.name}</b>  </li>
+            <li><b>Difficulty:  ${trail.dif}</b></li>
+            <li><b>Length:  ${trail.len}</b></li>
+            <li><b>Description:  ${trail.des}</b></li>
+        </ul>
+        </div>`
+    const infowindow = new google.maps.InfoWindow({
+        content: contentString,
+    });
+
+    return(infowindow);
+}
 
 </script>
-
 
 
 <script
