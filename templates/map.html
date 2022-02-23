@@ -2,34 +2,35 @@
 {% block title %}Portland Trails{% endblock %}
 {% block head %}
 
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+
 <h3>Portland Trails</h3>
 <!--The div element for the map -->
 
-<label for="trail">Trail Name:</label>
-<input id="trail" name="trail"
-    min="1" max="20">
+<label for="trail">Trail Finder:</label>
+<input name="filter" min="1" max="20" id="TrailName">
 
 <label for="difficulty">Difficulty:</label>
-<select id="difficulty" name="difficulty">
+<select name="filter" id="Difficulty">
   <option value="easy">Easy</option>
   <option value="medium">Medium</option>
   <option value="hard">Hard</option>
 </select> 
 
 <label for="length">Length:</label>
-<input type="range" min="1" max="30" value="15" class="slider" id="myRange">
+<input type="range" min="1" max="30" value="15" class="slider" name="filter" id="Length">
 </div>
 
 <label for="elevation">Elevation:</label>
-<input type="range" min="1" max="30" value="15" class="slider" id="myRange">
+<input type="range" min="1" max="30" value="15" class="slider" name="filter" id="Elevation">
 </div>
 
 <label for="time">Time:</label>
-<input type="range" min="1" max="30" value="15" class="slider" id="myRange">
+<input type="range" min="1" max="30" value="15" class="slider" name="filter" id="Time">
 </div>
 
 <label for="route type">Route Type:</label>
-<select id="route type" name="route type">
+<select name="filter" id="RouteType">
     <option value="loop">Loop</option>
     <option value="out_and_back">Out and Back</option>
     <option value="point_to_point">Point to Point</option>
@@ -94,84 +95,91 @@ body {
  
 
 </style>
+
 <script>
     "use strict";
     const trailslists = {{ trailslists|tojson }};
-    console.log(trailslists);
-     
-    function buttonControl(options) {
-        var control = document.createElement('DIV');
-        control.innerHTML = options.name;
-        control.className = 'button';
-        control.index = 1;
 
-        // Add the control to the map
-        options.gmap.controls[options.position].push(control);
-
-        // When the button is clicked pan to sydney
-        google.maps.event.addDomListener(control, 'click', options.action);
-        return control;
-    }
-
-  // Initialize and add the map
-  function initMap() {
-
-    // The location of Uluru
-    const uluru = {"lat": 45.51334993555411, "lng": -122.66478547235977 };
-    // The map, centered at uluru
-    let map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 12,
-            center: uluru,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            mapTypeControl: true,
-            mapTypeControlOptions: {
-                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-            }
-        });
-
-    for (let i=0; i < trailslists.length; i++) {
-        let position = new google.maps.LatLng(trailslists[i].long, trailslists[i].lat);
-
-        let infowindow = getInfo(trailslists[i]);
-        
-        let marker = new google.maps.Marker({
-            position: position,
-            map,
-            title: trailslists.name,
-        });
-
-        marker.addListener("click", () => {
-            infowindow.open({
-            anchor: marker,
-            map,
-            shouldFocus: false,
-        })});
-
-        marker.setMap(map);
-    }
-}
-function getInfo(trail) {
-    const contentString =
-        `<div id="trailInfo"> 
-        <ul style="list-style-type:none">
-            <li><b>Trail Name: ${trail.name}</b>  </li>
-            <li><b>Difficulty:  ${trail.dif}</b></li>
-            <li><b>Length:  ${trail.len}</b></li>
-            <li><b>Description:  ${trail.des}</b></li>
-        </ul>
-        </div>`
-    const infowindow = new google.maps.InfoWindow({
-        content: contentString,
+    $('input[name=filter]').change(function (e) {
+        filterTrails(this.id);
     });
 
-    return(infowindow);
-}
+    $('select[name=filter]').change(function (e) {
+        filterTrails(this.id);
+    });
 
+    // Initialize and add the map
+    function initMap() {
+
+        // The location of Uluru
+        const uluru = {"lat": 45.51334993555411, "lng": -122.66478547235977 };
+        // The map, centered at uluru
+        let map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: uluru,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: true,
+                mapTypeControlOptions: {
+                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+                }
+            });
+
+        for (let i=0; i < trailslists.length; i++) {
+            let position = new google.maps.LatLng(trailslists[i].long, trailslists[i].lat);
+
+            let infowindow = getInfo(trailslists[i]);
+            
+            let marker = new google.maps.Marker({
+                position: position,
+                map,
+                title: trailslists.name,
+            });
+
+            marker.addListener("click", () => {
+                infowindow.open({
+                anchor: marker,
+                map,
+                shouldFocus: false,
+            })});
+
+            marker.setMap(map);
+        }
+    }
+
+    function getInfo(trail) {
+        const contentString =
+            `<div id="trailInfo"> 
+            <ul style="list-style-type:none">
+                <li><b>Trail Name: ${trail.name}</b>  </li>
+                <li><b>Difficulty:  ${trail.dif}</b></li>
+                <li><b>Length:  ${trail.len}</b></li>
+                <li><b>Description:  ${trail.des}</b></li>
+            </ul>
+            </div>`
+        const infowindow = new google.maps.InfoWindow({
+            content: contentString,
+        });
+
+        return(infowindow);
+    }
+
+    function filterTrails(id) {
+        console.log("Change on: " + id);
+        const changedElement = document.getElementById(id);
+        console.log(changedElement.value);
+    };
+
+    function filterCrimes(id_val) {
+        if (crimeFilters[id_val]) {
+          crimeFilters[id_val] = false
+        } else {
+          crimeFilters[id_val] = true
+          crimesToFilter.push(id_val);
+        }
+        filterData(crimeData, crimesToFilter);
+      }
 </script>
 
 
-<script
-  src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap&libraries=&v=weekly"
-  async
-></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap&libraries=&v=weekly" async></script>
 {% endblock %}
