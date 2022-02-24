@@ -7,13 +7,15 @@
 <h3>Portland Trails</h3>
 <!--The div element for the map -->
 
-<label for="trail">Trail Finder:</label>
-<input name="filter" min="1" max="20" id="TrailName">
+<label for="trail">Trail Name:</label>
+<select name="filter" id="Trail Name">
+    <option value="select">Select</option>
+</select>
 
 <label for="difficulty">Difficulty:</label>
 <select name="filter" id="Difficulty">
   <option value="easy">Easy</option>
-  <option value="medium">Medium</option>
+  <option value="moderate">Medium</option>
   <option value="hard">Hard</option>
 </select> 
 
@@ -22,7 +24,7 @@
 </div>
 
 <label for="elevation">Elevation:</label>
-<input type="range" min="1" max="30" value="15" class="slider" name="filter" id="Elevation">
+<input type="range" min="1" max="5000" value="15" class="slider" name="filter" id="Elevation">
 </div>
 
 <label for="time">Time:</label>
@@ -32,7 +34,7 @@
 <label for="route type">Route Type:</label>
 <select name="filter" id="RouteType">
     <option value="loop">Loop</option>
-    <option value="out_and_back">Out and Back</option>
+    <option value="o">Out and Back</option>
     <option value="point_to_point">Point to Point</option>
 </select> 
 
@@ -92,13 +94,15 @@ body {
 	color:#000000; 
 }
 
- 
-
 </style>
 
 <script>
     "use strict";
-    const trailslists = {{ trailslists|tojson }};
+    const trailslist = {{ trailslist|tojson }};
+
+    let markers = [];
+
+    let map;
 
     $('input[name=filter]').change(function (e) {
         filterTrails(this.id);
@@ -108,15 +112,16 @@ body {
         filterTrails(this.id);
     });
 
+
     // Initialize and add the map
     function initMap() {
 
         // The location of Uluru
-        const uluru = {"lat": 45.51334993555411, "lng": -122.66478547235977 };
+        const portland = {"lat": 45.51334993555411, "lng": -122.66478547235977 };
         // The map, centered at uluru
-        let map = new google.maps.Map(document.getElementById("map"), {
+        map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 12,
-                center: uluru,
+                center: portland,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 mapTypeControl: true,
                 mapTypeControlOptions: {
@@ -124,26 +129,15 @@ body {
                 }
             });
 
-        for (let i=0; i < trailslists.length; i++) {
-            let position = new google.maps.LatLng(trailslists[i].long, trailslists[i].lat);
+        for (let i=0; i < trailslist.length; i++) {
+            let marker = createMarker(trailslist[i]);
 
-            let infowindow = getInfo(trailslists[i]);
-            
-            let marker = new google.maps.Marker({
-                position: position,
-                map,
-                title: trailslists.name,
-            });
-
-            marker.addListener("click", () => {
-                infowindow.open({
-                anchor: marker,
-                map,
-                shouldFocus: false,
-            })});
-
-            marker.setMap(map);
+            markers.push(marker);
         }
+        //paint markers to map
+        
+        addTrailMarkers();
+
     }
 
     function getInfo(trail) {
@@ -164,20 +158,62 @@ body {
     }
 
     function filterTrails(id) {
+        //grab every filter element
+        deleteTrailMarkers();
+        const difficultyValue = document.getElementById("Difficulty").value;
+        const lengthValue = document.getElementById("Length").value;
+        const elevationValue = document.getElementById("Elevation").value;
+        const timeValue = document.getElementById("Time").value;
+        const routetypeValue = document.getElementById("RouteType").value;
+        //iterate over every trail
+        for(let i=0; i < trailslist.length; i++){ 
+            console.log(trailslist[i].dif);
+            //if a trail matches our filters add to markers  
+            if(trailslist[i].dif === difficultyValue && routetypeValue === trailslist[i].routetype && lengthValue >= trailslist[i].len && elevationValue >= trailslist[i].elv && timeValue >= trailslist[i].tim){
+                markers.push(createMarker(trailslist[i]));
+            }
+        }
+        //paint markers to map
+        addTrailMarkers();
         console.log("Change on: " + id);
         const changedElement = document.getElementById(id);
         console.log(changedElement.value);
     };
 
-    function filterCrimes(id_val) {
-        if (crimeFilters[id_val]) {
-          crimeFilters[id_val] = false
-        } else {
-          crimeFilters[id_val] = true
-          crimesToFilter.push(id_val);
+    //function to delete all markers
+    function deleteTrailMarkers(){
+        for(let i=0; i < markers.length; i++){
+            markers[i].setMap(null);
         }
-        filterData(crimeData, crimesToFilter);
-      }
+        markers = [];
+    }
+    //function to add selected markers to the map after
+    function addTrailMarkers(){
+        for(let i=0; i < markers.length; i++){
+            markers[i].setMap(map);
+        }
+    }
+
+    function createMarker(trail){
+        let position = new google.maps.LatLng(trail.long, trail.lat);
+
+        let infowindow = getInfo(trail);
+
+        let marker = new google.maps.Marker({
+            position: position,
+            title: trail.name,
+        });
+
+        marker.addListener("click", () => {
+            infowindow.open({
+            anchor: marker,
+            map,
+            shouldFocus: false,
+        })});
+
+        return marker;
+    }
+
 </script>
 
 

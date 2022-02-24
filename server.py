@@ -109,7 +109,7 @@ def get_gmap():
 
     all_trails = Trails.query.all()
 
-    trailslists = []
+    trailslist = []
 
     for trail in all_trails:
         marker = {
@@ -117,17 +117,17 @@ def get_gmap():
             "long": trail.longitude,
             "lat": trail.latitude,
             "des": trail.description,
-            "dif": str(trail.difficulty),
+            "dif": trail.difficulty.value[0],
             "len": trail.length,
             "elv": trail.elevation,
             "tim": trail.time,
-            "routetype": str(trail.routetype)
+            "routetype": trail.routetype.value[0]
         }
 
-        trailslists.append(marker)
+        trailslist.append(marker)
 
       
-    return render_template("map.html", api_key=os.getenv('GOOGLE_MAPS_API_KEY'), trailslists=trailslists)
+    return render_template("map.html", api_key=os.getenv('GOOGLE_MAPS_API_KEY'), trailslist=trailslist)
 
 if __name__ == '__main__':
    
