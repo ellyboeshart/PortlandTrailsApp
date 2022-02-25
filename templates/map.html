@@ -14,9 +14,10 @@
 
 <label for="difficulty">Difficulty:</label>
 <select name="filter" id="Difficulty">
-  <option value="easy">Easy</option>
-  <option value="moderate">Medium</option>
-  <option value="hard">Hard</option>
+    <option value="easy">Select</option>
+    <option value="easy">Easy</option>
+    <option value="moderate">Moderate</option>
+    <option value="hard">Hard</option>
 </select> 
 
 <label for="length">Length:</label>
@@ -28,11 +29,12 @@
 </div>
 
 <label for="time">Time:</label>
-<input type="range" min="1" max="30" value="15" class="slider" name="filter" id="Time">
+<input type="range" min="1" max="10" value="5" class="slider" name="filter" id="Time">
 </div>
 
 <label for="route type">Route Type:</label>
 <select name="filter" id="RouteType">
+    <option value="loop">Select</option>
     <option value="loop">Loop</option>
     <option value="o">Out and Back</option>
     <option value="point_to_point">Point to Point</option>
@@ -97,6 +99,7 @@ body {
 </style>
 
 <script>
+
     "use strict";
     const trailslist = {{ trailslist|tojson }};
 
@@ -117,10 +120,10 @@ body {
     function initMap() {
 
         // The location of Uluru
-        const portland = {"lat": 45.51334993555411, "lng": -122.66478547235977 };
+        const portland = {"lat": 45.5400, "lng": -122.4336 };
         // The map, centered at uluru
         map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 12,
+                zoom: 11,
                 center: portland,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 mapTypeControl: true,
@@ -134,6 +137,15 @@ body {
 
             markers.push(marker);
         }
+
+        //dropdown filter for trail name
+        let trailDropdown = document.getElementById("Trail Name");
+        let innerHtml = '<option value="select">Select</option>'
+        for (let trail of trailslist) {
+            innerHtml += "<option value=" + trail.name + ">" + trail.name + "</option>";
+        }
+        trailDropdown.innerHTML = innerHtml; 
+
         //paint markers to map
         
         addTrailMarkers();
@@ -146,7 +158,8 @@ body {
             <ul style="list-style-type:none">
                 <li><b>Trail Name: ${trail.name}</b>  </li>
                 <li><b>Difficulty:  ${trail.dif}</b></li>
-                <li><b>Length:  ${trail.len}</b></li>
+                <li><b>Length:  ${trail.len} mi</b></li>
+                <li><b>Time:  ${trail.tim} h</b></li>
                 <li><b>Description:  ${trail.des}</b></li>
             </ul>
             </div>`
@@ -165,9 +178,9 @@ body {
         const elevationValue = document.getElementById("Elevation").value;
         const timeValue = document.getElementById("Time").value;
         const routetypeValue = document.getElementById("RouteType").value;
+        
         //iterate over every trail
         for(let i=0; i < trailslist.length; i++){ 
-            console.log(trailslist[i].dif);
             //if a trail matches our filters add to markers  
             if(trailslist[i].dif === difficultyValue && routetypeValue === trailslist[i].routetype && lengthValue >= trailslist[i].len && elevationValue >= trailslist[i].elv && timeValue >= trailslist[i].tim){
                 markers.push(createMarker(trailslist[i]));
@@ -175,9 +188,7 @@ body {
         }
         //paint markers to map
         addTrailMarkers();
-        console.log("Change on: " + id);
         const changedElement = document.getElementById(id);
-        console.log(changedElement.value);
     };
 
     //function to delete all markers
