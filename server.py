@@ -1,24 +1,18 @@
 from unicodedata import name
 from flask import Flask, jsonify, render_template, request, redirect, flash, session
 from flask_sqlalchemy import SQLAlchemy
-from trails_app_models.users import Users
-from trails_app_models.trails import Trails
-from trails_app_models.reviews import Reviews
+from model import Users, Trails, Reviews
+from model import connect_to_db
 import googlemaps
 import os 
 from dotenv import load_dotenv
 
 load_dotenv()
 
+db = SQLAlchemy()
+
 app = Flask(__name__)
 app.secret_key = "dev"
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///trails_app"
-
-db = SQLAlchemy(app)
-
-@app.before_first_request
-def before():
-    db.create_all()
 
 @app.route('/')
 def get_base():
@@ -130,5 +124,9 @@ def get_gmap():
     return render_template("map.html", api_key=os.getenv('GOOGLE_MAPS_API_KEY'), trailslist=trailslist)
 
 if __name__ == '__main__':
-   
-    app.run(debug=True, host="0.0.0.0")
+    app.debug = True
+    app.jinja_env.auto_reload = app.debug
+
+    connect_to_db(app)
+
+    app.run(port=5000, host="0.0.0.0")

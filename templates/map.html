@@ -206,7 +206,7 @@ body {
     }
 
     function createMarker(trail){
-        let position = new google.maps.LatLng(trail.long, trail.lat);
+        let position = new google.maps.LatLng(trail.lat, trail.long);
 
         let infowindow = getInfo(trail);
 
