@@ -1,7 +1,7 @@
 from unicodedata import name
 from flask import Flask, jsonify, render_template, request, redirect, flash, session
 from flask_sqlalchemy import SQLAlchemy
-from model import Users, Trails, Reviews
+from model import Score, Users, Trails, Reviews
 from model import connect_to_db
 import googlemaps
 import os 
@@ -47,18 +47,22 @@ def get_trail_by_id(id):
     })
 
 @app.route('/reviews/<id>')
-def get_review_by_id(id):
-    review = Reviews.query.filter_by(id=id).first()
+def get_review_by_trail_id(id):
+    reviews = Reviews.query.filter_by(trail_id=id)
 
-    return jsonify({
-        'id': review.id, 
-        'user_id': review.user_id, 
-        'trail_id': review.trail_id,
-        'created': review.created, 
-        'updated': review.updated,
-        'comment': review.comment,
-        'score': review.score.value
-    })
+    reviews_list = []
+
+    for cur_review in reviews:
+        review = {
+            'id':cur_review.id,
+            'user_id':cur_review.user_id,
+            'trail_id':cur_review.trail_id,
+            'comment':cur_review.comment,
+            'score':cur_review.score.value
+        }
+        reviews_list.append(review)
+
+    return jsonify(reviews_list)
 
 @app.route('/sign_up',methods = ['POST'])
 def process_sign_up():
@@ -86,16 +90,24 @@ def process_login():
     else:
         # Log in user by storing the user's email in session
         session["user_email"] = user.email
+        session["user_id"] = user.id
         flash(f"Welcome back, {user.email}!")
         return redirect("/map")
 
 @app.route('/review',methods = ['POST'])
 def process_review():
-    data = request.json
-    review = Reviews(id=data['id'], user_id=data['user_id'], trail_id=data['trail_id'], comment=data['comment'], score=data['score'])
+    data = request.form
+    print(data)
+    trail_id = data['filter']
+    id = Reviews.query.all()
+    id = id[len(id) - 1].id + 1
+    review = Reviews(id=id, trail_id=trail_id, user_id=1, comment=data['comment'], score=data['Score'])
     db.session.add(review)
     db.session.commit()
-    return get_review_by_id(data['id'])
+    flash("Review Added!")
+    return redirect('/map')
+
+
 
 @app.route("/map")
 def get_gmap():
@@ -107,6 +119,7 @@ def get_gmap():
 
     for trail in all_trails:
         marker = {
+            "id": trail.id,
             "name": trail.name,
             "long": trail.longitude,
             "lat": trail.latitude,

@@ -8,7 +8,7 @@
 <!--The div element for the map -->
 
 <label for="trail">Trail Name:</label>
-<select name="filter" id="Trail Name">
+<select name="filter" id="Top_Trail_Name">
     <option value="select">Select</option>
 </select>
 
@@ -44,6 +44,21 @@
     <div class="dropDownControl" id="My Box">My Box<img src="http://maps.gstatic.com/mapfiles/arrow-down.png" class="dropDownArrow"></div>
     
 </div>
+<form action="/review" method="POST">
+    <label for="trail">Trail Name:</label>
+    <select name="filter" id="Bottom_Trail_Name">
+        <option value="select">Select</option>
+    </select>
+    <p>
+      Trail Review <input type="text" name="comment">
+    </p>
+    <p>
+      Score <input type="text" name="Score">
+    </p>
+    <p>
+      <input type="submit">
+    </p>
+  </form>
 
 
 <style type="text/css">
@@ -139,12 +154,14 @@ body {
         }
 
         //dropdown filter for trail name
-        let trailDropdown = document.getElementById("Trail Name");
+        let topTrailDropdown = document.getElementById("Top_Trail_Name");
+        let bottomTrailDropdown = document.getElementById("Bottom_Trail_Name");
         let innerHtml = '<option value="select">Select</option>'
         for (let trail of trailslist) {
-            innerHtml += "<option value=" + trail.name + ">" + trail.name + "</option>";
+            innerHtml += "<option value=" + trail.id + ">" + trail.name + "</option>";
         }
-        trailDropdown.innerHTML = innerHtml; 
+        topTrailDropdown.innerHTML = innerHtml;
+        bottomTrailDropdown.innerHTML = innerHtml;
 
         //paint markers to map
         
@@ -163,6 +180,7 @@ body {
                 <li><b>Description:  ${trail.des}</b></li>
             </ul>
             </div>`
+
         const infowindow = new google.maps.InfoWindow({
             content: contentString,
         });
@@ -215,7 +233,21 @@ body {
             title: trail.name,
         });
 
-        marker.addListener("click", () => {
+        marker.addListener("click", async () => {
+            let reviewsString = infowindow.content;
+
+            let response = await fetch(`/reviews/${trail.id}`);
+            response = JSON.parse(await response.text());
+
+            reviewsString = reviewsString.concat('<div style="height:120px;width:400;border:1px;"list-style-type:none">"><ul>');
+
+            for(let review of response) {
+                reviewsString = reviewsString.concat(`<li><p>Review: ${review.comment}</p><p>Score: ${review.score}</p></li>`);
+            }
+            reviewsString = reviewsString.concat('</ul></div>');
+
+            infowindow.setContent(reviewsString);
+
             infowindow.open({
             anchor: marker,
             map,

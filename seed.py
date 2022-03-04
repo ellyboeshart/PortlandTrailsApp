@@ -43,7 +43,7 @@ def load_reviews():
         reviews_reader = reader(review_seed, delimiter=",")
 
         for row in reviews_reader:
-            review = Reviews(id=row[0],user_id=row[1],trail_id=row[2],created=row[3],updated=row[4],comment=row[5],score=row[6])
+            review = Reviews(id=row[0],user_id=row[1],trail_id=row[2],comment=row[3],score=row[4])
             db.session.add(review)
             db.session.commit()
 
@@ -63,4 +63,4 @@ if __name__ == '__main__':
 
     load_trails()
     load_users()
-    #load_reviews()
+    load_reviews()
