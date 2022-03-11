@@ -1,39 +1,61 @@
 {% extends 'base.html' %}
+
+
 {% block title %}Portland Trails{% endblock %}
 
+
 {% block body %}
-  <h1>Portland Trails</h1>
+  <h1 class="title">Portland Trails</h1>
 
-  <h2>Create an Account</h2>
-  <form action="/sign_up" method="POST">
-    <p>
-      Username <input type="text" name="username">
-    </p>
-    <p>
-      Email <input type="text" name="email">
-    </p>
-    <p>
-      Password <input type="password" name="password">
-    </p>
+  <section class="ftco-section">
+		<div class="container">
+      <h2 class="heading-section">Create an Account</h2>
+      <form action="/sign_up" class="signup-form" method="POST">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Username" name="username" required>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Email" name="email" required>
+        </div>
+        <div class="form-group">
+          <input id="password-field" type="password" class="form-control" placeholder="Password" name="password" required>
+          <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="form-control btn btn-primary submit px-3">Sign Up</button>
+        </div>
+      </form>
+     <br></br>
+      <h2 class="heading-section">Log In</h2>
+      <form action="/login" class="signin-form" method="POST">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Username" name="email" required>
+        </div>
+        <div class="form-group">
+          <input id="password-field" type="password" class="form-control" placeholder="Password" name="password" required>
+          <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="form-control btn btn-primary submit px-3">Sign In</button>
+        </div>
+      </form>
+    </div>
+  </section>
 
-    <p>
-      <input type="submit">
-    </p>
-  </form>
+  <script>
+    "use strict";
 
-  <h2>Log In</h2>
-  <form action="/login" method="POST">
-    <p>
-      Email <input type="text" name="email">
-    </p>
 
-    <p>
-      Password <input type="password" name="password">
-    </p>
+    var fullHeight = function() {
 
-    <p>
-      <input type="submit">
-    </p>
-  </form>
+      $('.js-fullheight').css('height', $(window).height());
+      $(window).resize(function(){
+        $('.js-fullheight').css('height', $(window).height());
+      });
+
+    };
+    fullHeight();
+  </script>
+
 
 {% endblock %}

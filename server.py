@@ -1,5 +1,5 @@
 from unicodedata import name
-from flask import Flask, jsonify, render_template, request, redirect, flash, session
+from flask import Flask, jsonify, render_template, request, redirect, flash, session, send_file
 from flask_sqlalchemy import SQLAlchemy
 from model import Score, Users, Trails, Reviews
 from model import connect_to_db
@@ -17,6 +17,15 @@ app.secret_key = "dev"
 @app.route('/')
 def get_base():
     return render_template("homepage.html", api_key=os.getenv('GOOGLE_MAPS_API_KEY'))
+
+@app.route('/images/<file>')
+def get_image(file):
+    return send_file("images/" + file, mimetype='image/gif')
+
+@app.route('/styles/<file>')
+def get_css(file):
+    return send_file("styles/" + file)
+
 
 @app.route('/users/<id>')
 def get_user_by_id(id):
@@ -94,6 +103,12 @@ def process_login():
         flash(f"Welcome back, {user.email}!")
         return redirect("/map")
 
+@app.route('/logout')
+def process_logout():
+    "Process user logout"
+    session.clear()
+    return redirect("/")
+
 @app.route('/review',methods = ['POST'])
 def process_review():
     data = request.form
@@ -107,11 +122,11 @@ def process_review():
     flash("Review Added!")
     return redirect('/map')
 
-
-
 @app.route("/map")
 def get_gmap():
     """Get google map with trails information"""
+    if session.get("user_email") == None:
+        return redirect("/")
 
     all_trails = Trails.query.all()
 

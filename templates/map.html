@@ -42,23 +42,30 @@
 
 <div id="map">
     <div class="dropDownControl" id="My Box">My Box<img src="http://maps.gstatic.com/mapfiles/arrow-down.png" class="dropDownArrow"></div>
-    
+
 </div>
 <form action="/review" method="POST">
-    <label for="trail">Trail Name:</label>
-    <select name="filter" id="Bottom_Trail_Name">
-        <option value="select">Select</option>
-    </select>
-    <p>
-      Trail Review <input type="text" name="comment">
-    </p>
-    <p>
-      Score <input type="text" name="Score">
-    </p>
-    <p>
-      <input type="submit">
-    </p>
+    <div class="form-group">
+        <select placeholder="Select Trail Name" class="form-control" name="filter" id="Bottom_Trail_Name">
+            <option value="select">Select Trail</option>
+        </select>
+    </div>
+    <div class="form-group">
+      <input placeholder="Trail Review" class="form-control" type="text" name="comment">
+    </div>
+    <div class="form-group">
+      <input placeholder="Score" class="form-control" type="text" name="Score">
+    </div>
+    <div class="form-group">
+        <button type="submit" class="form-control btn btn-primary submit px-3">Submit Review</button>
+    </div>
   </form>
+<div class="logoutButton">
+    <form action="/logout">
+        <input type="submit" value="Logout" id="logout"/>
+    </form>
+</div>
+</pre>
 
 
 <style type="text/css">
@@ -66,6 +73,12 @@
   #map {
     width: 100%;
     height: 500px;
+}
+
+.logoutButton{
+    position:absolute;
+    top:0;
+    right:0;
 }
 
 .container-fluid {
@@ -100,7 +113,7 @@
 
 html { 
 	height: 100%;
-	background-color: #7bce79;
+	background-color: #9ec49d;
 }
 
 body {
@@ -110,6 +123,7 @@ body {
 	font-family:"arial", helvetica; 
 	color:#000000; 
 }
+
 
 </style>
 
@@ -129,7 +143,6 @@ body {
     $('select[name=filter]').change(function (e) {
         filterTrails(this.id);
     });
-
 
     // Initialize and add the map
     function initMap() {
@@ -156,7 +169,7 @@ body {
         //dropdown filter for trail name
         let topTrailDropdown = document.getElementById("Top_Trail_Name");
         let bottomTrailDropdown = document.getElementById("Bottom_Trail_Name");
-        let innerHtml = '<option value="select">Select</option>'
+        let innerHtml = '<option value="select">Select Trail Name</option>'
         for (let trail of trailslist) {
             innerHtml += "<option value=" + trail.id + ">" + trail.name + "</option>";
         }
