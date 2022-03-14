@@ -72,9 +72,18 @@
     <div class="form-group">
       <input placeholder="Trail Review" class="form-control" type="text" name="comment">
     </div>
-    <div class="form-group">
-      <input placeholder="Score" class="form-control" type="text" name="Score">
-    </div>
+    <div class="score">
+        <input type="radio" id="star5" name="rate" value="five" />
+        <label for="star5" title="text">5 stars</label>
+        <input type="radio" id="star4" name="rate" value="four" />
+        <label for="star4" title="text">4 stars</label>
+        <input type="radio" id="star3" name="rate" value="three" />
+        <label for="star3" title="text">3 stars</label>
+        <input type="radio" id="star2" name="rate" value="two" />
+        <label for="star2" title="text">2 stars</label>
+        <input type="radio" id="star1" name="rate" value="one" />
+        <label for="star1" title="text">1 star</label>
+      </div>
     <div class="form-group">
         <button type="submit" class="form-control btn btn-primary submit px-3" style="width: 20%;">Submit Review</button>
     </div>
@@ -97,6 +106,46 @@
     right:0;
     padding-right: 10px;
     padding-top: 10px;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+.score {
+    float: left;
+    height: 46px;
+    padding: 0 10px;
+}
+.score:not(:checked) > input {
+    position:absolute;
+    top:-9999px;
+}
+.score:not(:checked) > label {
+    float:right;
+    width:1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:30px;
+    color:#ccc;
+}
+.score:not(:checked) > label:before {
+    content: '★ ';
+}
+.score > input:checked ~ label {
+    color: #08c5a6;   
+}
+.score:not(:checked) > label:hover,
+.score:not(:checked) > label:hover ~ label {
+    color: #08c5a6; 
+}
+.score > input:checked + label:hover,
+.score > input:checked + label:hover ~ label,
+.score > input:checked ~ label:hover,
+.score > input:checked ~ label:hover ~ label,
+.score > label:hover ~ input:checked ~ label {
+    color: #254d46;
 }
 
 
@@ -238,7 +287,7 @@
             reviewsString = reviewsString.concat('<div style="height:120px;width:400;border:1px;"list-style-type:none">"><ul>');
 
             for(let review of response) {
-                reviewsString = reviewsString.concat(`<li><p>Review: ${review.comment}</p><p>Score: ${review.score}</p></li>`);
+                reviewsString = reviewsString.concat(`<li><p> Username: ${review.username}</p><p>Review: ${review.comment}</p><p>Score: ${review.score}</p></li>`);
             }
             reviewsString = reviewsString.concat('</ul></div>');
 

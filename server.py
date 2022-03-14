@@ -18,6 +18,10 @@ app.secret_key = "dev"
 def get_base():
     return render_template("homepage.html", api_key=os.getenv('GOOGLE_MAPS_API_KEY'))
 
+@app.route('/favicon.ico')
+def get_favicon():
+    return get_image("favicon.png")
+
 @app.route('/images/<file>')
 def get_image(file):
     return send_file("images/" + file, mimetype='image/gif')
@@ -62,16 +66,22 @@ def get_review_by_trail_id(id):
     reviews_list = []
 
     for cur_review in reviews:
+        user = getUserById(cur_review.user_id)
         review = {
             'id':cur_review.id,
             'user_id':cur_review.user_id,
             'trail_id':cur_review.trail_id,
             'comment':cur_review.comment,
-            'score':cur_review.score.value
+            'score':cur_review.score.value,
+            'username':user.name
         }
         reviews_list.append(review)
 
     return jsonify(reviews_list)
+
+def getUserById(id):
+    user = Users.query.filter_by(id=id).first()
+    return user
 
 @app.route('/sign_up',methods = ['POST'])
 def process_sign_up():
@@ -116,7 +126,7 @@ def process_review():
     trail_id = data['filter']
     id = Reviews.query.all()
     id = id[len(id) - 1].id + 1
-    review = Reviews(id=id, trail_id=trail_id, user_id=1, comment=data['comment'], score=data['Score'])
+    review = Reviews(id=id, trail_id=trail_id, user_id=session.get("user_id"), comment=data['comment'], score=data['rate'])
     db.session.add(review)
     db.session.commit()
     flash("Review Added!")
