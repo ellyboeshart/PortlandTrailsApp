@@ -33,18 +33,18 @@
         </select> 
 
         <!-- Length Dropdown -->
-        <label for="length">Length:</label>
-        <input type="range" min="1" max="3000" value="1500" class="slider col-1" name="filter" id="Length">
+        <label for="length" id="LengthLabel">Length:</label>
+        <input type="range" min="1" max="30" value="1" class="slider col-1" name="filter" id="Length" oninput="this.previousElementSibling.textContent = `${this.value} mile(s)`">
         
         
 
         <!-- Elevation Bar -->
-        <label for="elevation">Elevation:</label>
-        <input type="range" min="1" max="5000" value="5000" class="slider col-1" name="filter" id="Elevation">
+        <label for="elevation" id="ElevationLabel">Elevation:</label>
+        <input type="range" min="1" max="5000" value="5000" class="slider col-1" name="filter" id="Elevation" oninput="this.previousElementSibling.textContent = `${this.value} feet`">
 
         <!-- Time Bar -->
         <label for="time" id="TimeLabel">Time:</label>
-        <input type="range" min="1" max="10" value="10" class="slider col-1" name="filter" id="Time">
+        <input type="range" value="1" min="1" max="10" class="slider col-1" name="filter" id="Time" oninput="this.previousElementSibling.textContent = `${this.value} hour(s)`">
 
         <!-- Route Type Dropdown -->
         <label for="route type">Route Type:</label>
@@ -62,7 +62,7 @@
 
 <!-- Trail Review Section -->
 
-<h5 class="title" style = "padding-top: 8px;">Submit Review</h5>
+<h5 class="title" style = "padding-top:8px; font-size: large;">Submit Review</h5>
 <form style="text-align:center; width: 85%; margin-left: auto; margin-right: auto;" action="/review" method="POST">
     <div class="form-group">
         <select placeholder="Select Trail Name" class="form-control" name="filter" id="Bottom_Trail_Name">
@@ -85,7 +85,7 @@
         <label for="star1" title="text">1 star</label>
       </div>
     <div class="form-group">
-        <button type="submit" class="form-control btn btn-primary submit px-3" style="width: 20%;">Submit Review</button>
+        <button type="submit" class="form-control btn btn-primary submit px-3" style="width: 15%;">Submit</button>
     </div>
 </form>
 
@@ -149,6 +149,7 @@
 }
 
 
+
 </style>
 
 <script>
@@ -163,6 +164,24 @@
 
     let map;
 
+    document.getElementById("Length").onmouseup = () => {
+        setTimeout(() => {
+            document.getElementById("LengthLabel").textContent = "Length:"
+        }, 100)
+    }
+
+    document.getElementById("Elevation").onmouseup = () => {
+        setTimeout(() => {
+            document.getElementById("ElevationLabel").textContent = "Elevation:"
+        }, 100)
+    }
+
+    document.getElementById("Time").onmouseup = () => {
+        setTimeout(() => {
+            document.getElementById("TimeLabel").textContent = "Time:"
+        }, 100)
+    }
+
     $('input[name=filter]').change(function (e) {
         filterTrails(this.id);
     });
@@ -170,6 +189,7 @@
     $('select[name=filter]').change(function (e) {
         filterTrails(this.id);
     });
+
 
     // Initialize and add the map
     function initMap() {
@@ -197,7 +217,7 @@
         //dropdown filter for trail name
         let topTrailDropdown = document.getElementById("Top_Trail_Name");
         let bottomTrailDropdown = document.getElementById("Bottom_Trail_Name");
-        let innerHtml = '<option value="select">Select Trail Name</option>'
+        let innerHtml = '<option value="select">Select</option>'
         for (let trail of trailslist) {
             innerHtml += "<option value=" + trail.id + ">" + trail.name + "</option>";
         }
@@ -314,8 +334,6 @@
 
     };
     fullHeight();
-
-    $('#Length').slider();
 
 </script>
 

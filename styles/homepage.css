@@ -496,8 +496,8 @@ pre {
 .col-xl-auto {
   position: relative;
   width: 100%;
-  padding-right: 15px;
-  padding-left: 15px; }
+  padding-right: 10px;
+  padding-left: 10px; }
 
 .col {
   -ms-flex-preferred-size: 0;

@@ -110,7 +110,7 @@ def process_login():
         # Log in user by storing the user's email in session
         session["user_email"] = user.email
         session["user_id"] = user.id
-        flash(f"Welcome back, {user.email}!")
+        flash(f"Welcome back, {user.name}!")
         return redirect("/map")
 
 @app.route('/logout')
