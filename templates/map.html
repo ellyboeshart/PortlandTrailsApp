@@ -16,7 +16,7 @@
 
     <!-- Filter Menu -->
 
-    <div style="width: 100%; height: 45px; display:block; padding-bottom: 0px;">
+    <div style="width: 100%; height: 45px; display:block; padding-bottom: 0px; padding-top: 0px;">
         <!-- Trail Dropdown -->
         <label for="trail">Trail Name:</label>
         <select name="filter" class="col-1" id="Top_Trail_Name">
@@ -40,7 +40,7 @@
 
         <!-- Elevation Bar -->
         <label for="elevation" id="ElevationLabel">Elevation:</label>
-        <input type="range" min="1" max="5000" value="5000" class="slider col-1" name="filter" id="Elevation" oninput="this.previousElementSibling.textContent = `${this.value} feet`">
+        <input type="range" min="1" max="5000" value="1" class="slider col-1" name="filter" id="Elevation" oninput="this.previousElementSibling.textContent = `${this.value} feet`">
 
         <!-- Time Bar -->
         <label for="time" id="TimeLabel">Time:</label>
@@ -95,7 +95,7 @@
   /* Set the size of the div element that contains the map */
   #map {
     width: 90%;
-    height: 65%;
+    height: 60%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -234,12 +234,14 @@
         const contentString =
             `<div id="trailInfo"> 
             <ul style="list-style-type:none">
+                <h6>Trail Information</h6>
                 <li><b>Trail Name: ${trail.name}</b>  </li>
                 <li><b>Difficulty:  ${trail.dif}</b></li>
                 <li><b>Length:  ${trail.len} mi</b></li>
                 <li><b>Time:  ${trail.tim} h</b></li>
                 <li><b>Description:  ${trail.des}</b></li>
             </ul>
+            <br>
             </div>`
 
         const infowindow = new google.maps.InfoWindow({
@@ -283,6 +285,14 @@
             markers[i].setMap(map);
         }
     }
+
+    function getStars(score) {
+        let starScore = "";
+        for(let i = 0; i < score; i++) {
+            starScore = starScore.concat("⭐");
+        }
+        return starScore;
+    }
     
 
     function createMarker(trail){
@@ -304,10 +314,10 @@
             let response = await fetch(`/reviews/${trail.id}`);
             response = JSON.parse(await response.text());
 
-            reviewsString = reviewsString.concat('<div style="height:120px;width:400;border:1px;"list-style-type:none">"><ul>');
-
+            reviewsString = reviewsString.concat('<div style="height:120px;width:400;border:1px;"list-style-type:none"><ul><h6>Reviews</h6></ul><ul style="list-style-type:none">');
+            
             for(let review of response) {
-                reviewsString = reviewsString.concat(`<li><p> Username: ${review.username}</p><p>Review: ${review.comment}</p><p>Score: ${review.score}</p></li>`);
+                reviewsString = reviewsString.concat(`<div style="border:1px solid black"><li><b>Name: ${review.username}</b></li><li><b>Comment: ${review.comment}</b></li><li><b>Score: ${getStars(review.score)}</b></li></div>`);
             }
             reviewsString = reviewsString.concat('</ul></div>');
 
