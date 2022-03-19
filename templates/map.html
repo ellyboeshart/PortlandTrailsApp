@@ -235,11 +235,11 @@
             `<div id="trailInfo"> 
             <ul style="list-style-type:none">
                 <h6>Trail Information</h6>
-                <li><b>Trail Name: ${trail.name}</b>  </li>
-                <li><b>Difficulty:  ${trail.dif}</b></li>
-                <li><b>Length:  ${trail.len} mi</b></li>
-                <li><b>Time:  ${trail.tim} h</b></li>
-                <li><b>Description:  ${trail.des}</b></li>
+                <li><b>Trail Name</b>: ${trail.name}</b>  </li>
+                <li><b>Difficulty</b>:  ${trail.dif}</b></li>
+                <li><b>Length</b>:  ${trail.len} mi</b></li>
+                <li><b>Time</b>:  ${trail.tim} h</b></li>
+                <li><b>Description</b>:  ${trail.des}</b></li>
             </ul>
             <br>
             </div>`
@@ -317,7 +317,7 @@
             reviewsString = reviewsString.concat('<div style="height:120px;width:400;border:1px;"list-style-type:none"><ul><h6>Reviews</h6></ul><ul style="list-style-type:none">');
             
             for(let review of response) {
-                reviewsString = reviewsString.concat(`<div style="border:1px solid black"><li><b>Name: ${review.username}</b></li><li><b>Comment: ${review.comment}</b></li><li><b>Score: ${getStars(review.score)}</b></li></div>`);
+                reviewsString = reviewsString.concat(`<div style="border:1px solid black"><li><b>Name:</b> ${review.username}</li><li><b>Comment:</b> ${review.comment}</li><li><b>Score:</b> ${getStars(review.score)}</b></li></div>`);
             }
             reviewsString = reviewsString.concat('</ul></div>');
 
